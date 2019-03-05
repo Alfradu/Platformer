@@ -10,7 +10,7 @@ import java.util.Locale;
 
 public class Viewport {
     private final PointF mLookAt = new PointF(0f,0f);
-    private float lerp = 0.2f;
+    private float lerp = 0.1f;
     private int mPixelsPerMeterX; //viewport "density"
     private int mPixelsPerMeterY;
     private int mScreenWidth; //resolution
@@ -30,9 +30,10 @@ public class Viewport {
         mScreenHeight = screenHeight;
         mScreenCenterX = mScreenWidth / 2;
         mScreenCenterY = mScreenHeight / 2;
-        mLookAt.x = 0.0f;
-        mLookAt.y = 0.0f;
         setMetersToShow(metersToShowX, metersToShowY);
+        mLookAt.x = mHalfDistX;
+        mLookAt.y = 0.0f;
+
     }
 
     @Override
@@ -81,10 +82,17 @@ public class Viewport {
     }
 
     public void lookAt(final float x, final float y){ //TODO: clean up bounds
-        if (!inView(_bounds)){
-            mLookAt.x += (x - mLookAt.x) * lerp;
+        if (inViewLeft(_bounds.left)){
+            if (x > mHalfDistX){
+                mLookAt.x += (x - mLookAt.x) * lerp;
+            }
+        }
+        else if (inViewRight(_bounds.right)){
+            if (x < _bounds.right-mHalfDistX){
+                mLookAt.x += (x - mLookAt.x) * lerp;
+            }
         } else {
-            mLookAt.x += x;
+            mLookAt.x += (x - mLookAt.x) * lerp;
         }
         mLookAt.y = y;
     }
@@ -123,10 +131,17 @@ public class Viewport {
                 && (bounds.top < bottom && bounds.bottom > top);
     }
 
+    public boolean inViewLeft(final float bound){
+            return (bound > mLookAt.x-mHalfDistX);
+    }
+
+    public boolean inViewRight(final float bound){
+        return (bound < mLookAt.x+mHalfDistX);
+    }
+
     public void setBounds(final RectF bounds){
         _bounds = bounds;
     }
-
     public RectF getBounds(){
         return _bounds;
     }
