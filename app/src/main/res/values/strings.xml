@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Platformer</string>
+    <string name="score">Score: </string>
+    <string name="lives">Lives: </string>
 </resources>

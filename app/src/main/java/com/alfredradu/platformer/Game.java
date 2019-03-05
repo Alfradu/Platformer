@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 
 import com.alfredradu.platformer.entities.Entity;
 import com.alfredradu.platformer.input.InputManager;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callback {
     public static final String TAG = "Game";
     private Thread _gameThread = null;
+    private static Context cont = null;
     private volatile boolean _isRunning = false;
     private SurfaceHolder _holder = null;
     private Paint _paint = new Paint();
@@ -46,6 +48,9 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
     private LevelManager _level = null;
     private InputManager _controls = new InputManager();
 
+    public int _lives = 3;
+    public int _score = 0;
+
     public Game(Context context) {
         super(context);
         init();
@@ -64,6 +69,7 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
     }
 
     private void init(){
+        cont = getContext();
         final int TARGET_HEIGHT = 360;
         final int actualHeight = getScreenHeight();
         final float ratio = (TARGET_HEIGHT >= actualHeight) ? 1 : (float) TARGET_HEIGHT / actualHeight;
@@ -78,6 +84,8 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
         _holder = getHolder();
         _holder.addCallback(this);
         _holder.setFixedSize(STAGE_WIDTH, STAGE_HEIGHT);
+        updateLives();
+        updateScore();
         Log.d(TAG, "Resolution: " + STAGE_WIDTH + " : " + STAGE_HEIGHT);
     }
 
@@ -90,6 +98,9 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
         _controls = controls;
     }
 
+    public static Context getCont(){
+        return cont;
+    }
 
     public float getWorldHeight(){ return _level._levelHeight; }
     public float getWorldWidth(){ return _level._levelWidth; }
@@ -147,6 +158,17 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
         }
     }
 
+    private void updateLives(){ //TODO: update when lives changes
+        TextView tv=findViewById(R.id.lives);
+        String newHealth = getResources().getString(R.string.lives) + _lives;
+        tv.setText(newHealth);
+    }
+    private void updateScore(){ //TODO: update when score changes
+        TextView tv=findViewById(R.id.score);
+        String newScore = getResources().getString(R.string.score) + _score;
+        tv.setText(newScore);
+    }
+
     private boolean lockCanvas() {
         if (!_holder.getSurface().isValid()) {
             return false;
@@ -181,6 +203,7 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         _gameThread = null;
+        cont = null;
         if (_level != null){
             _level.destroy();
             _level = null;
