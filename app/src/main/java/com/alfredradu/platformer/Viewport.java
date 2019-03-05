@@ -21,6 +21,8 @@ public class Viewport {
     private float mMetersToShowY;
     private float mHalfDistX; //cached value (0.5*FOV)
     private float mHalfDistY;
+    private RectF _bounds;
+
     private final static float BUFFER = 2f; //overdraw, to avoid visual gaps
 
     public Viewport(final int screenWidth, final int screenHeight, final float metersToShowX, final float metersToShowY){
@@ -78,8 +80,12 @@ public class Viewport {
         return mPixelsPerMeterY;
     }
 
-    public void lookAt(final float x, final float y){
-        mLookAt.x += (x - mLookAt.x) * lerp;
+    public void lookAt(final float x, final float y){ //TODO: clean up bounds
+        if (!inView(_bounds)){
+            mLookAt.x += (x - mLookAt.x) * lerp;
+        } else {
+            mLookAt.x += x;
+        }
         mLookAt.y = y;
     }
     public void lookAt(final Entity obj){
@@ -115,5 +121,13 @@ public class Viewport {
         final float top  = (mLookAt.y - mHalfDistY);
         return (bounds.left < right && bounds.right > left)
                 && (bounds.top < bottom && bounds.bottom > top);
+    }
+
+    public void setBounds(final RectF bounds){
+        _bounds = bounds;
+    }
+
+    public RectF getBounds(){
+        return _bounds;
     }
 }

@@ -17,8 +17,8 @@ public class Player extends DynamicEntity {
 
     public Player (final String spriteName, final int xpos, final int ypos){
         super(spriteName, xpos, ypos);
-        _width = DEFAULT_DIMENSION; //set different values for player size
-        _height = DEFAULT_DIMENSION;
+        _width = DEFAULT_DIMENSION/2; //set different values for player size
+        _height = DEFAULT_DIMENSION/2;
         loadBitmap(spriteName,xpos,ypos);
     }
 

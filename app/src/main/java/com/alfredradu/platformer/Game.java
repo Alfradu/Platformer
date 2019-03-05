@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -73,6 +74,7 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
         Entity._game = this;
         _pool = new BitmapPool(this);
         _level = new LevelManager(new TestLevel(), _pool);
+        _camera.setBounds(new RectF(0f,0f,_level._levelWidth, _level._levelHeight));
         _holder = getHolder();
         _holder.addCallback(this);
         _holder.setFixedSize(STAGE_WIDTH, STAGE_HEIGHT);
