@@ -3,6 +3,7 @@ package com.alfredradu.platformer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.alfredradu.platformer.input.InputManager;
 import com.alfredradu.platformer.input.TouchController;

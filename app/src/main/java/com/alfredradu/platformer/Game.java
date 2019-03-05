@@ -12,7 +12,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.TextView;
 
 import com.alfredradu.platformer.entities.Entity;
 import com.alfredradu.platformer.input.InputManager;
@@ -50,7 +49,6 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
 
     public int _lives = 3;
     public int _score = 0;
-
     public Game(Context context) {
         super(context);
         init();
@@ -84,8 +82,6 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
         _holder = getHolder();
         _holder.addCallback(this);
         _holder.setFixedSize(STAGE_WIDTH, STAGE_HEIGHT);
-        updateLives();
-        updateScore();
         Log.d(TAG, "Resolution: " + STAGE_WIDTH + " : " + STAGE_HEIGHT);
     }
 
@@ -156,17 +152,6 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
         } finally {
             _holder.unlockCanvasAndPost(_canvas);
         }
-    }
-
-    private void updateLives(){ //TODO: update when lives changes
-        TextView tv=findViewById(R.id.lives);
-        String newHealth = getResources().getString(R.string.lives) + _lives;
-        tv.setText(newHealth);
-    }
-    private void updateScore(){ //TODO: update when score changes
-        TextView tv=findViewById(R.id.score);
-        String newScore = getResources().getString(R.string.score) + _score;
-        tv.setText(newScore);
     }
 
     private boolean lockCanvas() {

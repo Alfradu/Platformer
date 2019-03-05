@@ -9,5 +9,4 @@
         android:id="@+id/game"/>
 
     <include layout="@layout/touch_controlls"/>
-    <include layout="@layout/player_hud"/>
 </FrameLayout>
