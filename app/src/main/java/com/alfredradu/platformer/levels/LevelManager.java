@@ -1,6 +1,7 @@
 package com.alfredradu.platformer.levels;
 
-import com.alfredradu.platformer.Game;
+import com.alfredradu.platformer.entities.DynamicEntity;
+import com.alfredradu.platformer.entities.Enemy;
 import com.alfredradu.platformer.entities.Entity;
 import com.alfredradu.platformer.entities.Player;
 import com.alfredradu.platformer.entities.StaticEntity;
@@ -34,13 +35,15 @@ public class LevelManager {
     private void checkCollisions(){ //TODO: only test against closest entities
         final int count = _entities.size();
         Entity a, b;
-        for(int i = 0; i < count-1; i++){
+        for(int i = 0; i < count; i++){
             a = _entities.get(i);
-            for(int j = i+1; j < count; j++){
-                b = _entities.get(j);
-                if (a.isColliding(b)){
-                    a.onCollision(b);
-                    b.onCollision(a);
+            if (a.isDynamic()) {
+                for (int j = 0; j < count; j++) {
+                    b = _entities.get(j);
+                    if (a != b && a.isColliding(b)) {
+                        a.onCollision(b);
+                        b.onCollision(a);
+                    }
                 }
             }
         }
@@ -69,6 +72,8 @@ public class LevelManager {
             if (_player == null){
                 _player = (Player) e;
             }
+        } else if (spriteName.equalsIgnoreCase(LevelData.ENEMY)){
+            e = new Enemy(spriteName, xpos, ypos);
         } else {
             e = new StaticEntity(spriteName, xpos, ypos);
         }

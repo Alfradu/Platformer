@@ -3,6 +3,8 @@ package com.alfredradu.platformer.levels;
 public abstract class LevelData {
     public static final String NULLSPRITE = "nullsprite";
     public static final String PLAYER = "player";
+    public static final String ENEMY = "enemy";
+    public static final String HIDDEN = "nullsprite"; //TODO: use transparent sprite
     public static final int NO_TILE = 0;
 
     int[][] _tiles;

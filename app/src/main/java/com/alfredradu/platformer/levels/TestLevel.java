@@ -16,7 +16,7 @@ public class TestLevel extends LevelData {
         _tileIdToSpriteName.put(0, NULLSPRITE);
         _tileIdToSpriteName.put(1, PLAYER);
         _tileIdToSpriteName.put(2, "ground");
-        _tileIdToSpriteName.put(3, "ground2");
+        _tileIdToSpriteName.put(3, ENEMY);
         _tileIdToSpriteName.put(4, "ground3");
 
         InputStream is = Game.getCont().getResources().openRawResource(R.raw.level1);

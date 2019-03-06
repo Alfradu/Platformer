@@ -49,6 +49,7 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
 
     public int _lives = 3;
     public int _score = 0;
+
     public Game(Context context) {
         super(context);
         init();

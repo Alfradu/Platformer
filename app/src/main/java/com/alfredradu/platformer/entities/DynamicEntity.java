@@ -15,6 +15,9 @@ public class DynamicEntity extends StaticEntity {
     }
 
     @Override
+    public boolean isDynamic(){ return true; }
+
+    @Override
     public void update(double dt) {
         _x += Utils.clamp((float)(_velX * dt),-MAX_DELTA, MAX_DELTA);
 

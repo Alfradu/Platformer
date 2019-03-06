@@ -41,6 +41,7 @@ public abstract class Entity {
         return _y + (_height * 0.5f);
     }
 
+    public boolean isDynamic(){ return false;}
     public void setLeft(final float leftEdgePosition) {
         _x = leftEdgePosition;
     }
