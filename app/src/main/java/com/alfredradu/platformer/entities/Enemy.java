@@ -3,9 +3,10 @@ package com.alfredradu.platformer.entities;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.util.Log;
 
 public class Enemy extends DynamicEntity {
-    static final String TAG = "Player";
+    static final String TAG = "Enemy";
     float ENEMY_RUN_SPEED = -1.0f; // m/s
     private final int LEFT = 1;
     private final int RIGHT = -1;
@@ -13,8 +14,8 @@ public class Enemy extends DynamicEntity {
 
     public Enemy(final String spriteName, final int xpos, final int ypos) {
         super(spriteName, xpos, ypos);
-        _width = DEFAULT_DIMENSION/2;
-        _height = DEFAULT_DIMENSION/2;
+        _width = DEFAULT_DIMENSION;
+        _height = DEFAULT_DIMENSION;
         loadBitmap(spriteName,xpos,ypos);
     }
 
@@ -43,9 +44,13 @@ public class Enemy extends DynamicEntity {
     public void onCollision(Entity that) {
         Entity.getOverlap(this, that, Entity.overlap);
         _x += Entity.overlap.x;
-        if (Entity.overlap.x != 0){
+        _y += Entity.overlap.y;
+        if (Entity.overlap.x != 0f && that._y < _y){
             ENEMY_RUN_SPEED *= -1f;
             updateFacingDirection(ENEMY_RUN_SPEED);
+        }
+        if (Entity.overlap.y != 0){
+            _velY = 0;
         }
     }
 }
