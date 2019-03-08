@@ -11,25 +11,25 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class TestLevel extends LevelData{
+public class Level3 extends LevelData{
     private final SparseArray<String> _tileIdToSpriteName = new SparseArray<>();
-    public TestLevel() throws IOException {
-        //TODO: set level vars : hp - score - coins remaining
+    public Level3() throws IOException {
+        _mapName = "level3";
         _tileIdToSpriteName.put(0, NULLSPRITE);
         _tileIdToSpriteName.put(1, PLAYER);
         _tileIdToSpriteName.put(2, ENEMY);
         _tileIdToSpriteName.put(3, SPEARS);
-        _tileIdToSpriteName.put(4, GROUND_RL);
-        _tileIdToSpriteName.put(5, GROUND_RR);
-        _tileIdToSpriteName.put(6, GROUND_SQ);
-        _tileIdToSpriteName.put(7, GROUND_URL);
-        _tileIdToSpriteName.put(8, GROUND_URR);
-        _tileIdToSpriteName.put(9, MUD);
+        _tileIdToSpriteName.put(4, "wavedesert_roundleft");
+        _tileIdToSpriteName.put(5, "wavedesert_roundright");
+        _tileIdToSpriteName.put(6, "wavedesert_square");
+        _tileIdToSpriteName.put(7, "wavedesert_uproundleft");
+        _tileIdToSpriteName.put(8, "wavedesert_uproundright");
+        _tileIdToSpriteName.put(9, "wavedesert_sandsquare");
         _tileIdToSpriteName.put(10, HEART);
         _tileIdToSpriteName.put(11, COIN);
 
         AssetManager am = Game.getCont().getAssets();
-        InputStream is = am.open("maps/level1.txt");
+        InputStream is = am.open("maps/"+_mapName+".txt");
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         int row = 0;
         int column = 0;
@@ -50,7 +50,6 @@ public class TestLevel extends LevelData{
         _tiles = new int[row][column];
         for (int i = 0; i < row; i++){
             for (int j = 0; j < column; j++){
-                //TODO: check for pickups or other entities present
                 _tiles[i][j] = Integer.parseInt(temp.get(i)[j]);
             }
         }

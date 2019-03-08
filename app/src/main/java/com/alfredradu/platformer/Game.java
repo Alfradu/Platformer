@@ -15,8 +15,7 @@ import android.view.SurfaceView;
 
 import com.alfredradu.platformer.entities.Entity;
 import com.alfredradu.platformer.input.InputManager;
-import com.alfredradu.platformer.levels.LevelManager;
-import com.alfredradu.platformer.levels.TestLevel;
+import com.alfredradu.platformer.levels.*;
 import com.alfredradu.platformer.utils.BitmapPool;
 
 import java.io.IOException;
@@ -48,9 +47,10 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
     private LevelManager _level = null;
     private InputManager _controls = new InputManager();
 
-    public int _lives = 3;
-    public int _score = 0;
-    public int _coinsRemaining;
+    private int _lives = 3;
+    private int _score = 0;
+    private int _coinsRemaining;
+    private int _currentLevel = 2;
 
     public Game(Context context) throws IOException {
         super(context);
@@ -76,16 +76,22 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
         final float ratio = (TARGET_HEIGHT >= actualHeight) ? 1 : (float) TARGET_HEIGHT / actualHeight;
         STAGE_WIDTH = (int) (ratio * getScreenWidth());
         STAGE_HEIGHT = TARGET_HEIGHT;
-        _camera = new Viewport(STAGE_WIDTH, STAGE_HEIGHT, METERS_TO_SHOW_X, METERS_TO_SHOW_Y);
-        Log.d(TAG, _camera.toString());
         Entity._game = this;
-        _pool = new BitmapPool(this);
-        _level = new LevelManager(new TestLevel(), _pool);
-        _camera.setBounds(new RectF(0f,0f,_level._levelWidth, _level._levelHeight));
+        reset();
         _holder = getHolder();
         _holder.addCallback(this);
         _holder.setFixedSize(STAGE_WIDTH, STAGE_HEIGHT);
         Log.d(TAG, "Resolution: " + STAGE_WIDTH + " : " + STAGE_HEIGHT);
+    }
+
+    private void reset() throws IOException{
+        _camera = null;
+        _camera = new Viewport(STAGE_WIDTH, STAGE_HEIGHT, METERS_TO_SHOW_X, METERS_TO_SHOW_Y);
+        Log.d(TAG, _camera.toString());
+        _pool = new BitmapPool(this);
+        _level = new LevelManager(getLevel(), _pool);
+        setCoinsLeft(_level._coinCount);
+        _camera.setBounds(new RectF(0f,0f,_level._levelWidth, _level._levelHeight));
     }
 
     public InputManager getControls(){
@@ -113,6 +119,52 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
     public static int getScreenWidth() { return Resources.getSystem().getDisplayMetrics().widthPixels; }
     public static int getScreenHeight() { return Resources.getSystem().getDisplayMetrics().heightPixels; }
 
+    public void addLife(){ _lives++; }
+    public void removeLife(){ _lives--; }
+    public void addScore(){ _score++; }
+    public void removeScore(){ _score--; }
+
+    public int getLife(){ return _lives; }
+    public int getScore(){ return _score; }
+    public int getCoinsLeft(){ return _coinsRemaining; }
+    public void setLife(int life){ _lives = life; }
+    public void setScore(int score){ _score = score; }
+    public void setCoinsLeft(int coinsRemaining){ _coinsRemaining = coinsRemaining; }
+    public void updateCoins(int val){
+        _coinsRemaining += val;
+    }
+
+    public void checkGameStatus() throws IOException {
+        if (_lives < 1){
+            //TODO: GAME OVER - restart current stage
+            Log.d(TAG, "Game over!");
+        }
+        if (_coinsRemaining < 1){
+            //TODO: STAGE CLEAR - load next stage - keep score
+            Log.d(TAG, "Level completed!");
+            reset();
+        }
+    }
+
+    public LevelData getLevel() throws IOException {
+        switch (_currentLevel){
+            case 0:
+                nextLevel();
+                return new Level1();
+            case 1:
+                nextLevel();
+                return new Level2();
+            case 2:
+                nextLevel();
+                return new Level3();
+            default:
+                return null;
+        }
+    }
+
+    private void nextLevel(){
+        _currentLevel++;
+    }
 
     @Override
     public void run() {
@@ -123,6 +175,11 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
             update(deltaTime);
             buildVisibleSet();
             render(_camera, _visibleEntities);
+            try {
+                checkGameStatus();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -192,6 +249,9 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
         Log.d(TAG, "onDestroy");
         _gameThread = null;
         cont = null;
+        _lives = 3;
+        _score = 0;
+        _currentLevel = 0;
         if (_level != null){
             _level.destroy();
             _level = null;

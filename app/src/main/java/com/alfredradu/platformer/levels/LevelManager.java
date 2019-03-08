@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class LevelManager {
     public int _levelHeight = 0;
     public int _levelWidth = 0;
+    public int _coinCount = 0;
 
     public final ArrayList<Entity> _entities = new ArrayList<>();
     private final ArrayList<Entity> _entitiesToAdd = new ArrayList<>();
@@ -82,6 +83,7 @@ public class LevelManager {
         }  else if (spriteName.equalsIgnoreCase(LevelData.HEART)){
             e = new Heart(spriteName, xpos, ypos);
         }  else if (spriteName.equalsIgnoreCase(LevelData.COIN)){
+            _coinCount++;
             e = new Coin(spriteName, xpos, ypos);
         } else {
             e = new StaticEntity(spriteName, xpos, ypos);
@@ -103,10 +105,7 @@ public class LevelManager {
     public void addEntity(final Entity e){
         if (e != null){ _entitiesToAdd.add(e); }
     }
-
-    public void removeEntity(final Entity e){
-        if (e != null){ _entitiesToRemove.add(e); }
-    }
+    public void removeEntity(final Entity e){ if (e != null){ _entitiesToRemove.add(e); } }
 
     private void cleanup(){
         addAndRemoveEntities();
