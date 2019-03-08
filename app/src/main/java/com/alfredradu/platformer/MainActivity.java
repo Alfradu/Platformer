@@ -3,7 +3,6 @@ package com.alfredradu.platformer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
 import com.alfredradu.platformer.input.InputManager;
 import com.alfredradu.platformer.input.TouchController;
@@ -16,8 +15,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         _game = findViewById(R.id.game);
-        InputManager controls = new TouchController(findViewById(R.id.touchControl));
-        _game.setControls(controls);
+        InputManager input = new TouchController(findViewById(R.id.touchControl));
+        _game.setControls(input);
     }
 
     @Override

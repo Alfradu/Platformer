@@ -31,20 +31,4 @@ public class DynamicEntity extends StaticEntity {
         }
         _isOnGround = false;
     }
-
-    @Override
-    public void onCollision(Entity that) {
-        Entity.getOverlap(this, that, Entity.overlap);
-        _x += Entity.overlap.x;
-        _y += Entity.overlap.y;
-        if (Entity.overlap.y != 0){
-            _velY = 0;
-            if (Entity.overlap.y < 0){
-                //overlapy.y < 0 = hit feet
-                _isOnGround = true;
-            } else {
-                //overlapy.y > 0 = hit head
-            }
-        }
-    }
 }

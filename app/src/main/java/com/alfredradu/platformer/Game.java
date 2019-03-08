@@ -19,6 +19,7 @@ import com.alfredradu.platformer.levels.LevelManager;
 import com.alfredradu.platformer.levels.TestLevel;
 import com.alfredradu.platformer.utils.BitmapPool;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callback {
@@ -36,7 +37,7 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
     private Canvas _canvas = null;
     private Viewport _camera = null;
     private static final float METERS_TO_SHOW_X = 0f; //set the value you want fixed
-    private static final float METERS_TO_SHOW_Y = 9f;  //the other is calculated at runtime!
+    private static final float METERS_TO_SHOW_Y = 6f;  //the other is calculated at runtime!
 
     static int STAGE_WIDTH = 1280;
     static int STAGE_HEIGHT = 720;
@@ -49,25 +50,26 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
 
     public int _lives = 3;
     public int _score = 0;
+    public int _coinsRemaining;
 
-    public Game(Context context) {
+    public Game(Context context) throws IOException {
         super(context);
         init();
     }
-    public Game(Context context, AttributeSet attrs) {
+    public Game(Context context, AttributeSet attrs) throws IOException {
         super(context, attrs);
         init();
     }
-    public Game(Context context, AttributeSet attrs, int defStyleAttr) {
+    public Game(Context context, AttributeSet attrs, int defStyleAttr) throws IOException {
         super(context, attrs, defStyleAttr);
         init();
     }
-    public Game(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public Game(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) throws IOException {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
 
-    private void init(){
+    private void init() throws IOException {
         cont = getContext();
         final int TARGET_HEIGHT = 360;
         final int actualHeight = getScreenHeight();
@@ -98,7 +100,7 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
     public static Context getCont(){
         return cont;
     }
-
+    public LevelManager getLevelManager() {return _level; }
     public float getWorldHeight(){ return _level._levelHeight; }
     public float getWorldWidth(){ return _level._levelWidth; }
 

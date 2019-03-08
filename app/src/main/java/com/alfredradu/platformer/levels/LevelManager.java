@@ -1,9 +1,11 @@
 package com.alfredradu.platformer.levels;
 
-import com.alfredradu.platformer.entities.DynamicEntity;
+import com.alfredradu.platformer.entities.Coin;
 import com.alfredradu.platformer.entities.Enemy;
 import com.alfredradu.platformer.entities.Entity;
+import com.alfredradu.platformer.entities.Heart;
 import com.alfredradu.platformer.entities.Player;
+import com.alfredradu.platformer.entities.Spear;
 import com.alfredradu.platformer.entities.StaticEntity;
 import com.alfredradu.platformer.utils.BitmapPool;
 
@@ -51,8 +53,8 @@ public class LevelManager {
 
     private void loadMapAssets(final LevelData map){
         cleanup();
-        _levelHeight = map.mHeight;
-        _levelWidth = map.mWidth;
+        _levelHeight = map._height;
+        _levelWidth = map._width;
 
         for(int y = 0; y < _levelHeight; y++){
             final int[] row = map.getRow(y);
@@ -72,8 +74,15 @@ public class LevelManager {
             if (_player == null){
                 _player = (Player) e;
             }
+            //TODO : make a dict
         } else if (spriteName.equalsIgnoreCase(LevelData.ENEMY)){
             e = new Enemy(spriteName, xpos, ypos);
+        }  else if (spriteName.equalsIgnoreCase(LevelData.SPEARS)){
+            e = new Spear(spriteName, xpos, ypos);
+        }  else if (spriteName.equalsIgnoreCase(LevelData.HEART)){
+            e = new Heart(spriteName, xpos, ypos);
+        }  else if (spriteName.equalsIgnoreCase(LevelData.COIN)){
+            e = new Coin(spriteName, xpos, ypos);
         } else {
             e = new StaticEntity(spriteName, xpos, ypos);
         }

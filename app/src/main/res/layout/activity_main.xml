@@ -9,4 +9,5 @@
         android:id="@+id/game"/>
 
     <include layout="@layout/touch_controlls"/>
+
 </FrameLayout>

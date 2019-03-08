@@ -81,7 +81,7 @@ public class Viewport {
         return _pixelsPerMeterY;
     }
 
-    public void lookAt(final float x, final float y){ //TODO: clean up bounds
+    public void lookAt(final float x, final float y){
         if (inViewLeft(_bounds.left)){
             if (x > _halfDistX){
                 _lookAt.x += (x - _lookAt.x) * lerp;

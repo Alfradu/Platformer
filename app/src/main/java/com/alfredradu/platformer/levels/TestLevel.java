@@ -1,25 +1,35 @@
 package com.alfredradu.platformer.levels;
 
+import android.content.res.AssetManager;
 import android.util.SparseArray;
 
 import com.alfredradu.platformer.Game;
-import com.alfredradu.platformer.R;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class TestLevel extends LevelData {
+public class TestLevel extends LevelData{
     private final SparseArray<String> _tileIdToSpriteName = new SparseArray<>();
-    public TestLevel(){
+    public TestLevel() throws IOException {
+        //TODO: set level vars : hp - score - coins remaining
         _tileIdToSpriteName.put(0, NULLSPRITE);
         _tileIdToSpriteName.put(1, PLAYER);
-        _tileIdToSpriteName.put(2, "ground");
-        _tileIdToSpriteName.put(3, ENEMY);
-        _tileIdToSpriteName.put(4, "ground3");
+        _tileIdToSpriteName.put(2, ENEMY);
+        _tileIdToSpriteName.put(3, SPEARS);
+        _tileIdToSpriteName.put(4, GROUND_RL);
+        _tileIdToSpriteName.put(5, GROUND_RR);
+        _tileIdToSpriteName.put(6, GROUND_SQ);
+        _tileIdToSpriteName.put(7, GROUND_URL);
+        _tileIdToSpriteName.put(8, GROUND_URR);
+        _tileIdToSpriteName.put(9, MUD);
+        _tileIdToSpriteName.put(10, HEART);
+        _tileIdToSpriteName.put(11, COIN);
 
-        InputStream is = Game.getCont().getResources().openRawResource(R.raw.level1);
+        AssetManager am = Game.getCont().getAssets();
+        InputStream is = am.open("maps/level1.txt");
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         int row = 0;
         int column = 0;

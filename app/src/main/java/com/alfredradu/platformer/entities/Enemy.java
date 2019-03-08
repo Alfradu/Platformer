@@ -14,7 +14,7 @@ public class Enemy extends DynamicEntity {
 
     public Enemy(final String spriteName, final int xpos, final int ypos) {
         super(spriteName, xpos, ypos);
-        _width = DEFAULT_DIMENSION;
+        _width = DEFAULT_DIMENSION/1.5f;
         _height = DEFAULT_DIMENSION;
         loadBitmap(spriteName,xpos,ypos);
     }

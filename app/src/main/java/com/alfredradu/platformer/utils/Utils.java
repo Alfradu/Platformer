@@ -1,5 +1,6 @@
 package com.alfredradu.platformer.utils;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
@@ -62,5 +63,13 @@ public abstract class Utils {
 
     public static float between( final float min, final float max){
         return min+RNG.nextFloat()*(max-min);
+    }
+
+    public static int pxToDp(final int px) {
+        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public static int dpToPx(final int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 }
