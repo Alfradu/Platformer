@@ -21,7 +21,8 @@ public class Heart extends DynamicEntity {
             _velY = 0;
         }
 
-        if (that instanceof Player){
+        if (that instanceof Player && !_collided){
+            _collided = true;
             _game.addLife();
             _game.getLevelManager().removeEntity(this);
         }

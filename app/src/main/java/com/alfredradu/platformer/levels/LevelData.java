@@ -8,7 +8,6 @@ public abstract class LevelData {
     public static final String HEART = "heart";
     public static final String COIN = "coin";
     public static final int NO_TILE = 0;
-    //TODO: add more sprites
     int[][] _tiles;
     int _height;
     int _width;

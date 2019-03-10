@@ -20,7 +20,8 @@ public class Coin extends DynamicEntity {
         if (Entity.overlap.y > 0) {
             _velY = 0;
         }
-        if (that instanceof Player){
+        if (that instanceof Player && !_collided){
+            _collided = true;
             _game.addScore();
             _game.updateCoins(-1);
             _game.getLevelManager().removeEntity(this);

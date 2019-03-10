@@ -2,4 +2,11 @@
     <string name="app_name">Platformer</string>
     <string name="score">Score: </string>
     <string name="lives">Lives: </string>
+    <string name="remaining">Coins remaining: </string>
+    <string name="game_over">GAME OVER!</string>
+    <string name="level_clear">LEVEL CLEAR!</string>
+    <string name="game_clear">YOU BEAT THE GAME!</string>
+    <string name="restart_level">(press anywhere to restart)</string>
+    <string name="next_level">(press anywhere to continue)</string>
+    <string name="finish">(press anywhere to go back to menu)</string>
 </resources>

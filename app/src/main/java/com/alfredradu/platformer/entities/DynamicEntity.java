@@ -9,6 +9,7 @@ public class DynamicEntity extends StaticEntity {
     public float _velY = 0;
     public float _gravity = GRAVITY;
     boolean _isOnGround = false;
+    boolean _collided = false;
 
     public DynamicEntity(String spriteName, int xpos, int ypos){
         super(spriteName, xpos, ypos);

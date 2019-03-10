@@ -15,6 +15,7 @@ public class LevelManager {
     public int _levelHeight = 0;
     public int _levelWidth = 0;
     public int _coinCount = 0;
+    public boolean _isNull = false;
 
     public final ArrayList<Entity> _entities = new ArrayList<>();
     private final ArrayList<Entity> _entitiesToAdd = new ArrayList<>();
@@ -53,18 +54,24 @@ public class LevelManager {
     }
 
     private void loadMapAssets(final LevelData map){
-        cleanup();
-        _levelHeight = map._height;
-        _levelWidth = map._width;
+        if (map != null) {
+            cleanup();
+            _levelHeight = map._height;
+            _levelWidth = map._width;
 
-        for(int y = 0; y < _levelHeight; y++){
-            final int[] row = map.getRow(y);
-            for (int x = 0; x < row.length; x++){
-                final int tileID = row[x];
-                if (tileID == LevelData.NO_TILE){ continue; }
-                final String spriteName = map.getSpriteName(tileID);
-                createEntity(spriteName, x, y);
+            for (int y = 0; y < _levelHeight; y++) {
+                final int[] row = map.getRow(y);
+                for (int x = 0; x < row.length; x++) {
+                    final int tileID = row[x];
+                    if (tileID == LevelData.NO_TILE) {
+                        continue;
+                    }
+                    final String spriteName = map.getSpriteName(tileID);
+                    createEntity(spriteName, x, y);
+                }
             }
+        } else {
+            _isNull = true;
         }
     }
 
@@ -75,7 +82,6 @@ public class LevelManager {
             if (_player == null){
                 _player = (Player) e;
             }
-            //TODO : make a dict
         } else if (spriteName.equalsIgnoreCase(LevelData.ENEMY)){
             e = new Enemy(spriteName, xpos, ypos);
         }  else if (spriteName.equalsIgnoreCase(LevelData.SPEARS)){
