@@ -1,5 +1,6 @@
 package com.alfredradu.platformer;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +18,12 @@ public class MainActivity extends AppCompatActivity {
         _game = findViewById(R.id.game);
         InputManager input = new TouchController(findViewById(R.id.touchControl));
         _game.setControls(input);
+    }
+
+    public void changeActivity(){
+        final Intent i = new Intent(this, MenuActivity.class);
+        startActivity(i);
+        finish();
     }
 
     @Override

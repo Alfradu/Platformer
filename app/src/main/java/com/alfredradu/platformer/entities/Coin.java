@@ -1,5 +1,7 @@
 package com.alfredradu.platformer.entities;
 
+import com.alfredradu.platformer.Game;
+
 public class Coin extends DynamicEntity {
     public Coin(String spriteName, int xpos, int ypos) {
         super(spriteName, xpos, ypos);
@@ -21,6 +23,7 @@ public class Coin extends DynamicEntity {
             _velY = 0;
         }
         if (that instanceof Player && !_collided){
+            _game.onGameEvent(Game.GameEvent.CoinPickup, this);
             _collided = true;
             _game.addScore();
             _game.updateCoins(-1);

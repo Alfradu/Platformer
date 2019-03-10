@@ -8,10 +8,6 @@ import com.alfredradu.platformer.R;
 public class TouchController extends InputManager implements View.OnTouchListener {
 
     public TouchController(View view){
-        view.findViewById(R.id.keypad_up)
-                .setOnTouchListener(this);
-        view.findViewById(R.id.keypad_down)
-                .setOnTouchListener(this);
         view.findViewById(R.id.keypad_left)
                 .setOnTouchListener(this);
         view.findViewById(R.id.keypad_right)
@@ -26,11 +22,6 @@ public class TouchController extends InputManager implements View.OnTouchListene
         int id = v.getId();
         if(action == MotionEvent.ACTION_DOWN){
             // User started pressing a key
-            if(id == R.id.keypad_up){
-                _verticalFactor -= 1;
-            }else if (id == R.id.keypad_down) {
-                _verticalFactor += 1;
-            }
             if (id == R.id.keypad_left) {
                 _horizontalFactor -= 1;
             } else if(id == R.id.keypad_right) {
@@ -41,11 +32,6 @@ public class TouchController extends InputManager implements View.OnTouchListene
             }
         } else if(action == MotionEvent.ACTION_UP) {
             // User released a key
-            if (id == R.id.keypad_up) {
-                _verticalFactor += 1;
-            } else if (id == R.id.keypad_down) {
-                _verticalFactor -= 1;
-            }
             if (id == R.id.keypad_left) {
                 _horizontalFactor += 1;
             } else if (id == R.id.keypad_right) {

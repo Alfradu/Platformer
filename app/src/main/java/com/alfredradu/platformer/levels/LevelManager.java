@@ -36,7 +36,7 @@ public class LevelManager {
         addAndRemoveEntities();
     }
 
-    private void checkCollisions(){ //TODO: only test against closest entities
+    private void checkCollisions(){
         final int count = _entities.size();
         Entity a, b;
         for(int i = 0; i < count; i++){

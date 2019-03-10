@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.media.AudioManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -18,6 +19,7 @@ import com.alfredradu.platformer.entities.Entity;
 import com.alfredradu.platformer.input.InputManager;
 import com.alfredradu.platformer.levels.*;
 import com.alfredradu.platformer.utils.BitmapPool;
+import com.alfredradu.platformer.utils.Jukebox;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,10 +28,12 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
     public static final String TAG = "Game";
     private Thread _gameThread = null;
     private static Context cont = null;
+    private MainActivity _activity = null;
     private volatile boolean _isRunning = false;
     private SurfaceHolder _holder = null;
     private Paint _paint = new Paint();
     private static final Point _renderPos = new Point();
+    private Jukebox _jukebox = null;
 
     private static final int BG_COLOR = Color.rgb(135,206,235);
     static final float textSize = 24f;
@@ -49,10 +53,10 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
     private ArrayList<Entity> _visibleEntities = new ArrayList<>();
     public BitmapPool _pool = null;
     private LevelManager _level = null;
-    private LevelData test = null;
     private InputManager _controls = new InputManager();
 
     private final int STARTING_LIVES = 3;
+    private final int LAST_MAP = 2;
     private int _lives = STARTING_LIVES;
     private int _score = 0;
     private int _totalScore;
@@ -60,8 +64,22 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
     private int _currentLevel = 0;
     private boolean _gameOver = false;
     private boolean _levelComplete = false;
+    private boolean _onLastLevelHUD = false;
     private boolean _onLastLevel = false;
     private boolean _reset = false;
+    private boolean _playOnceGameOver = false;
+    private boolean _playOnceLevelComplete = false;
+    private String _music = "grass";
+
+    public enum GameEvent {
+        Jump,
+        Hurt,
+        CoinPickup,
+        HeartPickup,
+        GameOver,
+        LevelClear,
+        LevelStart
+    }
 
     public Game(Context context) throws IOException {
         super(context);
@@ -82,6 +100,9 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
 
     private void init() throws IOException {
         cont = getContext();
+        _activity = (MainActivity) cont;
+        _activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        _jukebox = new Jukebox(_activity, _music);
         final int TARGET_HEIGHT = 360;
         final int actualHeight = getScreenHeight();
         final float ratio = (TARGET_HEIGHT >= actualHeight) ? 1 : (float) TARGET_HEIGHT / actualHeight;
@@ -102,24 +123,30 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
         _camera = new Viewport(STAGE_WIDTH, STAGE_HEIGHT, METERS_TO_SHOW_X, METERS_TO_SHOW_Y);
         Log.d(TAG, _camera.toString());
         _pool = new BitmapPool(this);
-        if (!_onLastLevel){
-            _level = new LevelManager(getLevel(), _pool);
-            setCoinsLeft(_level._coinCount);
-            _camera.setBounds(new RectF(0f,0f,_level._levelWidth, _level._levelHeight));
-            if (_gameOver){
-                setLife(STARTING_LIVES);
-                setScore(_totalScore);
-                _gameOver = false;
-            }
-            if (_levelComplete){
-                _totalScore = _score;
-                setLife(STARTING_LIVES);
-                _levelComplete = false;
-            }
-            _reset = true;
-        } else {
-            //TODO: load menu
+
+        _level = new LevelManager(getLevel(), _pool);
+        setCoinsLeft(_level._coinCount);
+        _camera.setBounds(new RectF(0f,0f,_level._levelWidth, _level._levelHeight));
+        if (_gameOver){
+            setLife(STARTING_LIVES);
+            setScore(_totalScore);
+            _gameOver = false;
+        } else if (_onLastLevel && _levelComplete){
+            _activity.changeActivity();
+        } else if (_levelComplete){
+            _jukebox.newSong(_music);
+            _totalScore = _score;
+            setLife(STARTING_LIVES);
+            _levelComplete = false;
         }
+        if (_onLastLevelHUD){
+            _onLastLevel = true;
+        }
+        onGameEvent(GameEvent.LevelStart, null);
+        _reset = true;
+        _playOnceGameOver = false;
+        _playOnceLevelComplete = false;
+
     }
 
     public InputManager getControls(){
@@ -137,23 +164,15 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
     public LevelManager getLevelManager() {return _level; }
     public float getWorldHeight(){ return _level._levelHeight; }
     public float getWorldWidth(){ return _level._levelWidth; }
-
     public int worldToScreenX(float worldDistance){ return (int) (worldDistance * _camera.getPixelsPerMeterX()); }
     public int worldToScreenY(float worldDistance){ return (int) (worldDistance * _camera.getPixelsPerMeterY()); }
-
-    public float screenToWorldX(float pixelDistance){ return (float) (pixelDistance / _camera.getPixelsPerMeterX()); }
-    public float screenToWorldY(float pixelDistance){ return (float) (pixelDistance / _camera.getPixelsPerMeterY()); }
-
+    public float screenToWorldX(float pixelDistance){ return (pixelDistance / _camera.getPixelsPerMeterX()); }
+    public float screenToWorldY(float pixelDistance){ return (pixelDistance / _camera.getPixelsPerMeterY()); }
     public static int getScreenWidth() { return Resources.getSystem().getDisplayMetrics().widthPixels; }
     public static int getScreenHeight() { return Resources.getSystem().getDisplayMetrics().heightPixels; }
-
     public void addLife(){ _lives++; }
     public void removeLife(){ _lives--; }
     public void addScore(){ _score++; }
-    public void removeScore(){ _score--; }
-
-    public int getLife(){ return _lives; }
-    public int getScore(){ return _score; }
     public int getCoinsLeft(){ return _coinsRemaining; }
     public void setLife(int life){ _lives = life; }
     public void setScore(int score){ _score = score; }
@@ -162,21 +181,24 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
         _coinsRemaining += val;
     }
 
-    public void playMusic(){
-
-    }
-    public void playSound(){
-
+    public void onGameEvent( GameEvent gameEvent, Entity e){
+        _jukebox.playSoundForGameEvent(gameEvent);
     }
 
     public void checkGameStatus(){
         if (_lives < 1){
-            Log.d(TAG, "Game over!");
             _gameOver = true;
+            if(!_playOnceGameOver){
+                onGameEvent(GameEvent.GameOver, null);
+                _playOnceGameOver = true;
+            }
         }
         if (_coinsRemaining < 1){
-            Log.d(TAG, "Level completed!");
             _levelComplete = true;
+            if(!_playOnceLevelComplete){
+                onGameEvent(GameEvent.LevelClear, null);
+                _playOnceLevelComplete = true;
+            }
         }
     }
 
@@ -187,10 +209,13 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
         }
         switch (_currentLevel) {
             case 0:
+                _music = "grass";
                 return new Level1();
             case 1:
+                _music = "ice";
                 return new Level2();
             case 2:
+                _music = "desert";
                 return new Level3();
             default:
                 return null;
@@ -200,8 +225,8 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
 
     private void nextLevel(){
         _currentLevel++;
-        if (_currentLevel > 2){
-            _onLastLevel = true;
+        if (_currentLevel == LAST_MAP){
+            _onLastLevelHUD = true;
         }
     }
 
@@ -219,7 +244,7 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
     }
 
     private void update(final double dt) {
-        if (_reset) {
+        if (_reset && !_gameOver && !_levelComplete) {
             _level.update(dt);
             _camera.lookAt(_level._player);
         }
@@ -250,11 +275,7 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
             renderHUD(_canvas, _paint);
             if (_gameOver){
                 renderGameOverHUD(_canvas, _paint);
-            }
-            else if (_onLastLevel && _levelComplete){
-                renderGameClearHUD(_canvas, _paint);
-            }
-            else if (_levelComplete){
+            } else if (_levelComplete){
                 renderLevelClearHUD(_canvas, _paint);
             }
             _holder.unlockCanvasAndPost(_canvas);
@@ -264,6 +285,7 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
     @Override
     public boolean onTouchEvent(final MotionEvent event){
         if (event.getAction() == MotionEvent.ACTION_DOWN && getCoinsLeft() < 1 || event.getAction() == MotionEvent.ACTION_DOWN && _lives < 1) {
+            if (!_reset){ return false; }
             nextLevel();
             _reset = false;
             try {
@@ -311,26 +333,22 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
         paint.setAntiAlias(true);
 
         paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(String.format("%1$s",getResources().getString(R.string.level_clear)), _halfWidth, _halfHeight, paint);
-        paint.setTextSize(textSize-4);
-        canvas.drawText(String.format("%1$s",getResources().getString(R.string.next_level)), _halfWidth, _halfHeight+textSize, paint);
-    }
-
-    private void renderGameClearHUD(final Canvas canvas, final Paint paint){
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(textSize-4);
-        paint.setAntiAlias(true);
-
-        paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(String.format("%1$s",getResources().getString(R.string.game_clear)), _halfWidth, _halfHeight, paint);
-        paint.setTextSize(textSize-4);
-        canvas.drawText(String.format("%1$s",getResources().getString(R.string.finish)), _halfWidth, _halfHeight+textSize, paint);
+        if (_onLastLevelHUD){
+            canvas.drawText(String.format("%1$s", getResources().getString(R.string.game_clear)), _halfWidth, _halfHeight, paint);
+            paint.setTextSize(textSize - 4);
+            canvas.drawText(String.format("%1$s", getResources().getString(R.string.finish)), _halfWidth, _halfHeight + textSize, paint);
+        } else {
+            canvas.drawText(String.format("%1$s", getResources().getString(R.string.level_clear)), _halfWidth, _halfHeight, paint);
+            paint.setTextSize(textSize - 4);
+            canvas.drawText(String.format("%1$s", getResources().getString(R.string.next_level)), _halfWidth, _halfHeight + textSize, paint);
+        }
     }
 
     protected void onResume() {
         Log.d(TAG, "onResume");
         _isRunning = true;
         _controls.onResume();
+        _jukebox.resumeBgMusic();
         _gameThread = new Thread(this);
     }
 
@@ -338,6 +356,7 @@ public class Game extends SurfaceView implements Runnable, SurfaceHolder.Callbac
         Log.d(TAG, "onPause");
         _isRunning = false;
         _controls.onPause();
+        _jukebox.pauseBgMusic();
         while(_gameThread.getState() != Thread.State.TERMINATED) {
             try {
                 _gameThread.join();

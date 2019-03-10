@@ -4,7 +4,7 @@ public class Spear extends DynamicEntity {
     public Spear(String spriteName, int xpos, int ypos) {
         super(spriteName, xpos, ypos);
         _width = DEFAULT_DIMENSION;
-        _height = DEFAULT_DIMENSION/4f;
+        _height = DEFAULT_DIMENSION/2f;
         loadBitmap(spriteName,xpos,ypos);
     }
 

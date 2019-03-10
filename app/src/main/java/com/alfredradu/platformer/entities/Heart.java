@@ -1,5 +1,7 @@
 package com.alfredradu.platformer.entities;
 
+import com.alfredradu.platformer.Game;
+
 public class Heart extends DynamicEntity {
     public Heart(String spriteName, int xpos, int ypos) {
         super(spriteName, xpos, ypos);
@@ -22,6 +24,7 @@ public class Heart extends DynamicEntity {
         }
 
         if (that instanceof Player && !_collided){
+            _game.onGameEvent(Game.GameEvent.HeartPickup, this);
             _collided = true;
             _game.addLife();
             _game.getLevelManager().removeEntity(this);

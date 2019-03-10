@@ -1,0 +1,2 @@
+sprites: 1001.com https://opengameart.org/content/platform-pack
+music: CodeManu https://opengameart.org/content/platformer-game-music-pack

@@ -7,13 +7,19 @@ import android.util.Log;
 
 public class Enemy extends DynamicEntity {
     static final String TAG = "Enemy";
-    float ENEMY_RUN_SPEED = -1.0f; // m/s
+    private static String _sprite1 = "";
+    private static String _sprite2 = "";
+    private String _loadedSprite = "";
+    private float ENEMY_RUN_SPEED = -1.0f; // m/s
     private final int LEFT = 1;
     private final int RIGHT = -1;
     private int _facing = LEFT; //initial facing dir
+    private int _steps = 40;
 
     public Enemy(final String spriteName, final int xpos, final int ypos) {
         super(spriteName, xpos, ypos);
+        _sprite1 = spriteName;
+        _sprite2 = spriteName+"2";
         _width = DEFAULT_DIMENSION/1.5f;
         _height = DEFAULT_DIMENSION;
         loadBitmap(spriteName,xpos,ypos);
@@ -32,12 +38,29 @@ public class Enemy extends DynamicEntity {
     @Override
     public void update(final double dt) {
         _velX = ENEMY_RUN_SPEED;
+        walk();
         super.update(dt);
     }
 
     private void updateFacingDirection(final float controlDirection){
         if(controlDirection < 0){ _facing = LEFT; }
         else if(controlDirection > 0){ _facing = RIGHT; }
+    }
+
+    private void walk(){
+        _steps++;
+        if (_steps%20==0) {
+            if (_loadedSprite.equals(_sprite1)) {
+                loadBitmap(_sprite2, (int) _x, (int) _y);
+                _loadedSprite = _sprite2;
+            } else {
+                loadBitmap(_sprite1, (int) _x, (int) _y);
+                _loadedSprite = _sprite1;
+            }
+        }
+        if (_steps < 1){
+            _steps = 40;
+        }
     }
 
     @Override

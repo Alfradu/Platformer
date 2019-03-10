@@ -9,4 +9,8 @@
     <string name="restart_level">(press anywhere to restart)</string>
     <string name="next_level">(press anywhere to continue)</string>
     <string name="finish">(press anywhere to go back to menu)</string>
+    <string name="play_text">Play</string>
+    <string name="toggle_text">Toggle sound</string>
+    <string name="credits_sprite">Art by 1001.com from opengameart.org!</string>
+    <string name="credits_music">Music by CodeManu from opengameart.org!</string>
 </resources>
